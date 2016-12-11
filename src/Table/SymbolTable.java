@@ -14,6 +14,19 @@ public class SymbolTable extends DynamicTable{
 	}
 	public void setter(){}
 	
+	public int isInArray(String s){
+		if(name.indexOf(s)==-1){
+			name.add(s);
+			System.out.println(s+" no "+name.indexOf(s));
+			return name.indexOf(s);
+		}
+		else{
+			System.out.println(s+" yes "+name.indexOf(s));
+			return name.indexOf(s);
+		}
+		
+	}
+	
 	public SymbolTable(){
 		name = new ArrayList<String>();
 		type = new ArrayList<String>();

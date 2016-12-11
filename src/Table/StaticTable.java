@@ -36,6 +36,8 @@ public class StaticTable {
 		keyWord.add("enum");
 		keyWord.add("typedef");
 		keyWord.add("sizeof");
+		keyWord.add("printf");
+		keyWord.add("scanf");
 		
 		boundaryWord.add("+");
 		boundaryWord.add("-");
@@ -43,6 +45,7 @@ public class StaticTable {
 		boundaryWord.add("/");
 		boundaryWord.add(";");
 		boundaryWord.add("\"");
+		boundaryWord.add("'");
 		boundaryWord.add("(");
 		boundaryWord.add(")");
 		boundaryWord.add("[");
@@ -63,9 +66,22 @@ public class StaticTable {
 		boundaryWord.add("==");
 		boundaryWord.add("!=");
 		boundaryWord.add("%");
-		boundaryWord.add(".");
+		boundaryWord.add("+=");
+		boundaryWord.add("-=");
+		boundaryWord.add("*=");
+		boundaryWord.add("/=");
+		
 	}
 	public StaticTable(){
 		
 	}
+	
+	public static int isKeyWord(String s){
+		return keyWord.indexOf(s);
+	}
+	
+	public static int isBoundaryWord(String s){
+		return boundaryWord.indexOf(s);
+	}
+	
 }
