@@ -25,7 +25,7 @@
 <p><li>符号表</p>
 <p><li>Scanner</p>
 <p><li>Parser及语法制导生成四元式</p>
-<p><li>优化</p>
+<p><li>优化过程</p>
 <p><li>针对汇编的虚拟机</p>
 <p><li>UI<br></p>
 </body>
