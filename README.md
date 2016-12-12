@@ -7,7 +7,7 @@
 <br>
 <p><h2>目前实现的功能：</h2></p>
 <hr />
-<p><b><li>无</p>
+<p><b><li>Scanner</p>
 <p><li>无</p>
 <p><li>无<br><br><br></b></p>
 </body>
