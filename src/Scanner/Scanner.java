@@ -13,9 +13,9 @@ public class Scanner {
 
 	public ArrayList<Token> token = new ArrayList<Token>();
 	LinkedList<String> Code=new LinkedList<String>();//代码
-	SymbolTable st=new SymbolTable();
-	CharacterTable ct=new CharacterTable();
-	NumberTable nt=new NumberTable();
+//	SymbolTable st=new SymbolTable();
+//	CharacterTable ct=new CharacterTable();
+//	NumberTable nt=new NumberTable();
 	public Scanner(String str){
 		int i,j;
 		for(i=0;i<str.length()-3;i++){
@@ -25,7 +25,7 @@ public class Scanner {
 					j++;
 				}
 				if(isNum(str.substring(i, j)))
-					token.add(new Token("NumberTable", nt.isInArray(str.substring(i, j))));
+					token.add(new Token("NumberTable", NumberTable.isInArray(str.substring(i, j))));
 				else
 					System.err.println("ERR");
 				i=j-1;
@@ -40,7 +40,7 @@ public class Scanner {
 					System.out.println(string+" key "+StaticTable.keyWord.indexOf(string));
 				}
 				else if(isIdentifier(string)){
-					token.add(new Token("SymbolTable", st.isInArray(string)));
+					token.add(new Token("SymbolTable", SymbolTable.isInArray(string)));
 				}
 				else
 					System.out.println("Err");
@@ -56,7 +56,7 @@ public class Scanner {
 					}
 					token.add(new Token("BoundaryWord",StaticTable.boundaryWord.indexOf("\"")));
 					System.out.println("\""+" bound "+StaticTable.boundaryWord.indexOf("\""));
-					token.add(new Token("CharacterTable", ct.isInArray(str.substring(i+1, j))));
+					token.add(new Token("CharacterTable", CharacterTable.isInArray(str.substring(i+1, j))));
 					token.add(new Token("BoundaryWord",StaticTable.boundaryWord.indexOf("\"")));
 					System.out.println("\""+" bound "+StaticTable.boundaryWord.indexOf("\""));
 					i=j;
@@ -70,7 +70,7 @@ public class Scanner {
 					}
 					token.add(new Token("BoundaryWord",StaticTable.boundaryWord.indexOf("'")));
 					System.out.println("'"+" bound "+StaticTable.boundaryWord.indexOf("'"));
-					token.add(new Token("CharacterTable", ct.isInArray(str.substring(i+1, j))));
+					token.add(new Token("CharacterTable", CharacterTable.isInArray(str.substring(i+1, j))));
 					token.add(new Token("BoundaryWord",StaticTable.boundaryWord.indexOf("'")));
 					System.out.println("'"+" bound "+StaticTable.boundaryWord.indexOf("'"));
 					i=j;
@@ -90,6 +90,8 @@ public class Scanner {
 				}
 			}
 		}
+		token.add(new Token("BoundaryWord", StaticTable.boundaryWord.indexOf("#")));
+		token.add(new Token("BoundaryWord", StaticTable.boundaryWord.indexOf("#")));
 	}
 	
 	//是否是标识符

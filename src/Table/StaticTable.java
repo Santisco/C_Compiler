@@ -70,6 +70,7 @@ public class StaticTable {
 		boundaryWord.add("-=");
 		boundaryWord.add("*=");
 		boundaryWord.add("/=");
+		boundaryWord.add("#");
 		
 	}
 	public StaticTable(){

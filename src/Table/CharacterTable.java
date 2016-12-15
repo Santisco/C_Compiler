@@ -2,16 +2,16 @@ package Table;
 
 import java.util.ArrayList;
 
-public class CharacterTable extends DynamicTable{
+public class CharacterTable {
 	
-	ArrayList<String> character = new ArrayList<String>();
+	public static ArrayList<String> character = new ArrayList<String>();
 
 	public String getter(){
 		return "00";
 	}
 	public void setter(){}
 	
-	public int isInArray(String s){
+	public static int isInArray(String s){
 		if(character.indexOf(s)==-1){
 			character.add(s);
 			System.out.println(s+" no "+character.indexOf(s));
