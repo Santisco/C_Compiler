@@ -8,6 +8,7 @@ import javax.swing.BoundedRangeModel;
 import Scanner.Scanner;
 import Table.CharacterTable;
 import Table.NumberTable;
+import Table.Quadruples;
 import Table.StaticTable;
 import Table.SymbolTable;
 import Token.Token;
@@ -325,12 +326,10 @@ public class Parser {
 		  System.out.println("L()");
 		  
 		  LinkedList<String> arithQueue=new LinkedList<String>();
-		  while(!w.equals(";")&&!w.equals(",")){
+		  while(StaticTable.boundaryWord.contains(w)
+				  &&!w.equals("+")&&!w.equals("-")&&!w.equals("*")&&!w.equals("/")){
 			  arithQueue.add(w);
 			  w=Search(i++);
-			  if(!NumberTable.number.contains(w)&&!SymbolTable.name.contains(w)
-					  &&w.equals("+")&&w.equals("-")&&w.equals("*")&&w.equals("/"))
-				  return false;
 		  }
 		  arithQueue.add("#");
 		  
@@ -347,8 +346,245 @@ public class Parser {
 	  }
 	  
 	  public boolean B(){
-		  System.out.println("B()");
-		  return false;
-	  }
+			//ifÓï¾ä
+		  	System.out.println("B()");
+			if(w.equals("if")){
+				w = Search(i++);
+				if(w.equals("(")){
+					w = Search(i++);
+					if(E()){
+						if(w.equals(")")){
+							w = Search(i++);
+							if(w.equals("{")){
+								w = Search(i++);
+								if(A()){
+									if(w.equals("}")){
+										w = Search(i++);
+										if(B1()){
+											return true;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			//whileÓï¾ä
+			else if(w.equals("while")){
+				w = Search(i++);
+				if(w.equals("(")){
+					w = Search(i++);
+					if(E()){
+						if(w.equals(")")){
+							w = Search(i++);
+							if(w.equals("{")){
+								w = Search(i++);
+								if(A()){
+									if(w.equals("}")){
+										w = Search(i++);
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			//forÓï¾ä
+			else if(w.equals("for")){
+				w = Search(i++);
+				if(w.equals("(")){
+					w = Search(i++);
+					if(X()){
+						if(w.equals(";")){
+							w = Search(i++);
+							if(G()){
+								if(w.equals(";")){
+									w = Search(i++);
+									if(Q()){
+										if(w.equals(")")){
+											w = Search(i++);
+											if(w.equals("{")){
+												w = Search(i++);
+												if(A()){
+													if(w.equals("}")){
+														w = Search(i++);
+														return true;
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			//scanfº¯Êý
+			else if(w.equals("scanf")){
+				w = Search(i++);
+				if(w.equals("(")){
+					w = Search(i++);
+					if(SymbolTable.name.contains(w)){
+						w = Search(i++);
+						if(w.equals(")")){
+							w = Search(i++);
+							return true;
+						}
+					}
+				}
+			}
+			//printfº¯Êý
+			else if(w.equals("printf")){
+				w = Search(i++);
+				if(w.equals("(")){
+					w = Search(i++);
+					if(SymbolTable.name.contains(w)){
+						w = Search(i++);
+						if(w.equals(")")){
+							w = Search(i++);
+							return true;
+						}
+					}
+					else if(w.equals("\"")){
+						if(CharacterTable.character.contains(w)){
+							w = Search(i++);
+							if(w.equals("\"")){
+								w = Search(i++);
+								if(w.equals(")")){
+									w = Search(i++);
+									return true;
+								}
+							}
+						}			
+					}	
+				}
+			}
+			return false;
+		}
+		
+		public boolean B1(){
+			System.out.println("B1()");
+			if(w.equals("else")){
+				w = Search(i++);
+				if(w.equals("{")){
+					w = Search(i++);
+					if(A()){
+						if(w.equals("}")){
+							w = Search(i++);
+							return true;
+						}
+						else 
+							return false;
+					}
+					else 
+						return false;
+				}
+				else if(B()){
+					return true;
+				}
+				else
+					return false;
+			}
+			else
+				return true;
+		}
+		
+		public boolean E(){
+			System.out.println("E()");
+			if(H()){
+				if(E1()){
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public boolean E1(){
+			System.out.println("E1()");
+			if(w.equals("&&")){
+				w = Search(i++);
+				if(E()){
+					return true;
+				}
+				else
+					return false;
+			}
+			return true;
+		}
+		
+		public boolean H(){
+			System.out.println("H()");
+			if(G()){
+				if(H1()){
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public boolean H1(){
+			System.out.println("H1()");
+			if(w.equals("||")){
+				w = Search(i++);
+				if(H()){
+					return true;
+				}
+				else
+					return false;
+			}
+			return true;
+		}
+		
+		public boolean G(){
+			System.out.println("G()");
+			if(L()){
+				if(D()){
+					if(L()){
+						return true;
+					}
+				}
+			}
+			else if(w.equals("(")){
+				w = Search(i++);
+				if(E()){
+					if(w.equals(")")){
+						w = Search(i++);
+						return true;
+					}
+				}
+			}
+			else if(w.equals("!")){
+				w = Search(i++);
+				if(E()){
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public boolean D(){
+			System.out.println("D()");
+			if(w.equals(">")){
+				w = Search(i++);
+				return true;
+			}
+			else if(w.equals("<")){
+				w = Search(i++);
+				return true;
+			}
+			else if(w.equals("==")){
+				w = Search(i++);
+				return true;
+			}
+			else if(w.equals("!=")){
+				w = Search(i++);
+				return true;
+			}
+			else 
+				return false;
+		}
 	  
 }

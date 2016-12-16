@@ -1,4 +1,4 @@
-package Parser;
+package Table;
 
 import java.util.LinkedList;
 

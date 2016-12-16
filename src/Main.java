@@ -10,7 +10,10 @@ public class Main {
 	
 		
 		Parser parser=new Parser("void main(){"
-				+ "int j;"
+				+ "int j = 0;"
+				+ "while(j < 1){"
+				+ "j = j+1;"
+				+ "}"
 				+ "}   ");
 		
 		

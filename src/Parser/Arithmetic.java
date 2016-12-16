@@ -5,6 +5,7 @@ import java.util.Queue;
 import java.util.Stack;
 
 import Table.NumberTable;
+import Table.Quadruples;
 import Table.SymbolTable;
 
 
