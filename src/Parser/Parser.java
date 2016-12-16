@@ -2,6 +2,7 @@ package Parser;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Stack;
 
 import javax.swing.BoundedRangeModel;
 
@@ -14,7 +15,7 @@ import Table.SymbolTable;
 import Token.Token;
 
 public class Parser {
-	
+	  public Stack<String> ariSEM = new Stack<String>();
 	  String w;
 	  int i;
 	  private ArrayList<Token> token = new ArrayList<Token>();
@@ -311,40 +312,120 @@ public class Parser {
 		  if(w.equals("++")){
 			  w=Search(i++);
 			  System.out.println(w);
-			  if(w.equals("--")){
+			  return true;
+		  }
+		  else  if(w.equals("--")){
 				  w=Search(i++);
 				  System.out.println(w);
 				  return true;
 			  }
-			  else
-				  return false;
-		  }
 		  return false;
 	  }
 	  
+	  private boolean ariGEQ(String s){
+			System.out.println("ope："+s);
+			if(ariSEM.size()>1){
+				String a2=ariSEM.pop();
+				String a1=ariSEM.pop();
+				String r="t"+(Quadruples.count+1);
+				Quadruples.quadruples[Quadruples.count++]=new Quadruples(s, a1, a2, r);
+				ariSEM.push(r);
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+	  
 	  public boolean L(){
 		  System.out.println("L()");
-		  
-		  LinkedList<String> arithQueue=new LinkedList<String>();
-		  while(StaticTable.boundaryWord.contains(w)
-				  &&!w.equals("+")&&!w.equals("-")&&!w.equals("*")&&!w.equals("/")){
-			  arithQueue.add(w);
-			  w=Search(i++);
-		  }
-		  arithQueue.add("#");
-		  
-		  Arithmetic arithmetic=new Arithmetic(arithQueue);
-		  
-		  if(arithmetic.Main()){
-			  for(int i=0;i<Quadruples.count;i++)
-				  System.out.println("("+Quadruples.quadruples[i].arg1+","+Quadruples.quadruples[i].arg2+","+Quadruples.quadruples[i].ope+","+Quadruples.quadruples[i].res+")");
+		  boolean flag=false;
+		  if(ariE())
 			  return true;
-		  }
 		  else
-			  return false;
-		  
+			  return flag;
 	  }
 	  
+	  private boolean ariE() {//E->T{+T{GEQ(+)}|-T{GEQ(-)}}子程序
+		  System.out.println("ariE()");
+		  boolean flag=false;
+		  if(!ariT())
+			  return flag;
+		  while(true){
+			  if(w.equals("+")){
+				  w=Search(i++);
+				  System.out.println(w);
+				  if(!ariT())
+					  return flag;
+				  if(!ariGEQ("+"))
+					  return flag;
+			  }
+			  else if(w.equals("-")){
+				  w=Search(i++);
+				  System.out.println(w);
+				  if(!ariT())
+					  return flag;
+				  if(!ariGEQ("-"))
+					  return flag;
+			  }
+			  else
+				  return true;
+		  }
+	  }
+
+		private boolean ariT() {//T->F{*F{GEQ(*)}|/T{GEQ(/)}}子程序
+			System.out.println("ariT()");
+			boolean flag=false;
+			if(!ariF())
+				return flag;
+			while(true){
+				if(w.equals("*")){
+					w=Search(i++);
+					  System.out.println(w);
+					if(!ariF())
+						return flag;
+					if(!ariGEQ("*"))
+						return flag;
+				}
+				else if(w.equals("/")){
+					w=Search(i++);
+					  System.out.println(w);
+					if(!ariF())
+						return flag;
+					if(!ariGEQ("/"))
+						return flag;
+				}
+				else
+					return true;
+			}
+		}
+
+		private boolean ariF() {//F->I{PUSH(I)}|(E)子程序
+			System.out.println("ariF()");
+			boolean flag=false;
+			if(w.equals("(")){
+				w=Search(i++);
+				System.out.println(w);
+				if(!ariE())
+					return flag;
+				if(w.equals(")")){
+					w=Search(i++);
+					System.out.println(w);
+					return true;
+				}
+				else
+					return flag;
+			}
+			else if(NumberTable.number.contains(w)||SymbolTable.name.contains(w)){
+				ariSEM.push(w);
+				w=Search(i++);
+				System.out.println(w);
+				return true;
+			}
+			else
+				return flag;
+		}
+
 	  public boolean B(){
 			//if语句
 		  	System.out.println("B()");
@@ -393,16 +474,18 @@ public class Parser {
 			}
 			//for语句
 			else if(w.equals("for")){
+				System.out.println("for开始");
 				w = Search(i++);
 				if(w.equals("(")){
 					w = Search(i++);
 					if(X()){
-						if(w.equals(";")){
-							w = Search(i++);
-							if(G()){
+						System.out.println("X判别成功");
+							if(B()){
+								System.out.println("B判别成功");
 								if(w.equals(";")){
 									w = Search(i++);
 									if(Q()){
+										System.out.println("Q判别成功");
 										if(w.equals(")")){
 											w = Search(i++);
 											if(w.equals("{")){
@@ -418,7 +501,7 @@ public class Parser {
 									}
 								}
 							}
-						}
+						
 					}
 				}
 			}
@@ -431,7 +514,10 @@ public class Parser {
 						w = Search(i++);
 						if(w.equals(")")){
 							w = Search(i++);
-							return true;
+							if(w.equals(";")){
+								w =Search(i++);							
+								return true;
+							}
 						}
 					}
 				}
@@ -440,22 +526,31 @@ public class Parser {
 			else if(w.equals("printf")){
 				w = Search(i++);
 				if(w.equals("(")){
+					System.out.println("识别（");
 					w = Search(i++);
 					if(SymbolTable.name.contains(w)){
+						System.out.println("识别变量");
 						w = Search(i++);
 						if(w.equals(")")){
 							w = Search(i++);
-							return true;
+							if(w.equals(";")){
+								w = Search(i++);
+								return true;
+							}
 						}
 					}
 					else if(w.equals("\"")){
+						w = Search(i++);
 						if(CharacterTable.character.contains(w)){
 							w = Search(i++);
 							if(w.equals("\"")){
 								w = Search(i++);
 								if(w.equals(")")){
 									w = Search(i++);
-									return true;
+									if(w.equals(";")){
+										w = Search(i++);
+										return true;
+									}
 								}
 							}
 						}			
