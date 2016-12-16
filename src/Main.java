@@ -10,7 +10,7 @@ public class Main {
 	
 		
 		Parser parser=new Parser("void main(){"
-				+ "j;"
+				+ "int j;"
 				+ "}   ");
 		
 		

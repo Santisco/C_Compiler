@@ -207,7 +207,7 @@ public class Parser {
 	  
 	  public boolean R(){
 		  System.out.println("R()");
-		  if(!SymbolTable.name.contains(w)){
+		  if(SymbolTable.name.contains(w)){
 			  w = Search(i++);
 			  System.out.println(w);
 			  if(w.equals("=")){
