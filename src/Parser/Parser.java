@@ -1,6 +1,7 @@
 package Parser;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.BoundedRangeModel;
 
@@ -214,7 +215,12 @@ public class Parser {
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
-					  return true;
+					  if(w.equals(";")){
+						  w=Search(i++);
+						  return true;
+					  }
+					  else
+						  return false;
 				  }
 				  return false;
 			  }
@@ -222,7 +228,12 @@ public class Parser {
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
-					  return true;
+					  if(w.equals(";")){
+						  w=Search(i++);
+						  return true;
+					  }
+					  else
+						  return false;
 				  }
 				  return false;
 			  }
@@ -230,7 +241,12 @@ public class Parser {
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
-					  return true;
+					  if(w.equals(";")){
+						  w=Search(i++);
+						  return true;
+					  }
+					  else
+						  return false;
 				  }
 				  return false;
 			  }
@@ -238,7 +254,12 @@ public class Parser {
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
-					  return true;
+					  if(w.equals(";")){
+						  w=Search(i++);
+						  return true;
+					  }
+					  else
+						  return false;
 				  }
 				  return false;
 			  }
@@ -246,7 +267,12 @@ public class Parser {
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
-					  return true;
+					  if(w.equals(";")){
+						  w=Search(i++);
+						  return true;
+					  }
+					  else
+						  return false;
 				  }
 				  return false;
 			  }
@@ -254,7 +280,12 @@ public class Parser {
 				  return false;
 		  }
 		  else if(Q()){
-			  return true;
+			  if(w.equals(";")){
+				  w=Search(i++);
+				  return true;
+			  }
+			  else
+				  return false;
 		  }
 		  else
 			  return false;
@@ -292,8 +323,27 @@ public class Parser {
 	  
 	  public boolean L(){
 		  System.out.println("L()");
-		  w=Search(i++);
-		  return true;
+		  
+		  LinkedList<String> arithQueue=new LinkedList<String>();
+		  while(!w.equals(";")&&!w.equals(",")){
+			  arithQueue.add(w);
+			  w=Search(i++);
+			  if(!NumberTable.number.contains(w)&&!SymbolTable.name.contains(w)
+					  &&w.equals("+")&&w.equals("-")&&w.equals("*")&&w.equals("/"))
+				  return false;
+		  }
+		  arithQueue.add("#");
+		  
+		  Arithmetic arithmetic=new Arithmetic(arithQueue);
+		  
+		  if(arithmetic.Main()){
+			  for(int i=0;i<Quadruples.count;i++)
+				  System.out.println("("+Quadruples.quadruples[i].arg1+","+Quadruples.quadruples[i].arg2+","+Quadruples.quadruples[i].ope+","+Quadruples.quadruples[i].res+")");
+			  return true;
+		  }
+		  else
+			  return false;
+		  
 	  }
 	  
 	  public boolean B(){
