@@ -28,9 +28,6 @@ public class SymbolTable {
 	}
 	
 	public SymbolTable(){
-//		name = new ArrayList<String>();
-//		type = new ArrayList<String>();
-//		categary = new ArrayList<String>();
-//		address = new ArrayList<String>();
+
 	}
 }
