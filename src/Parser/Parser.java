@@ -10,12 +10,13 @@ import javax.swing.BoundedRangeModel;
 import Scanner.Scanner;
 import Table.CharacterTable;
 import Table.NumberTable;
+import Table.Quadruples;
 import Table.StaticTable;
 import Table.SymbolTable;
 import Token.Token;
 
 public class Parser {
-	
+	  public Stack<String> ariSEM = new Stack<String>();
 	  String w;
 	  int i;
 	  private ArrayList<Token> token = new ArrayList<Token>();
@@ -313,14 +314,13 @@ public class Parser {
 		  if(w.equals("++")){
 			  w=Search(i++);
 			  System.out.println(w);
-			  if(w.equals("--")){
+			  return true;
+		  }
+		  else  if(w.equals("--")){
 				  w=Search(i++);
 				  System.out.println(w);
 				  return true;
 			  }
-			  else
-				  return false;
-		  }
 		  return false;
 	  }
 	  
@@ -346,7 +346,90 @@ public class Parser {
 			  return true;
 		  else
 			  return flag;
+<<<<<<< HEAD
 	  }
+	  
+	  private boolean ariE() {//E->T{+T{GEQ(+)}|-T{GEQ(-)}}子程序
+		  System.out.println("ariE()");
+		  boolean flag=false;
+		  if(!ariT())
+			  return flag;
+		  while(true){
+			  if(w.equals("+")){
+				  w=Search(i++);
+				  System.out.println(w);
+				  if(!ariT())
+					  return flag;
+				  if(!ariGEQ("+"))
+					  return flag;
+			  }
+			  else if(w.equals("-")){
+				  w=Search(i++);
+				  System.out.println(w);
+				  if(!ariT())
+					  return flag;
+				  if(!ariGEQ("-"))
+					  return flag;
+			  }
+			  else
+				  return true;
+		  }
+=======
+>>>>>>> origin/master
+	  }
+
+		private boolean ariT() {//T->F{*F{GEQ(*)}|/T{GEQ(/)}}子程序
+			System.out.println("ariT()");
+			boolean flag=false;
+			if(!ariF())
+				return flag;
+			while(true){
+				if(w.equals("*")){
+					w=Search(i++);
+					  System.out.println(w);
+					if(!ariF())
+						return flag;
+					if(!ariGEQ("*"))
+						return flag;
+				}
+				else if(w.equals("/")){
+					w=Search(i++);
+					  System.out.println(w);
+					if(!ariF())
+						return flag;
+					if(!ariGEQ("/"))
+						return flag;
+				}
+				else
+					return true;
+			}
+		}
+
+		private boolean ariF() {//F->I{PUSH(I)}|(E)子程序
+			System.out.println("ariF()");
+			boolean flag=false;
+			if(w.equals("(")){
+				w=Search(i++);
+				System.out.println(w);
+				if(!ariE())
+					return flag;
+				if(w.equals(")")){
+					w=Search(i++);
+					System.out.println(w);
+					return true;
+				}
+				else
+					return flag;
+			}
+			else if(NumberTable.number.contains(w)||SymbolTable.name.contains(w)){
+				ariSEM.push(w);
+				w=Search(i++);
+				System.out.println(w);
+				return true;
+			}
+			else
+				return flag;
+		}
 	  
 	  private boolean ariE() {//E->T{+T{GEQ(+)}|-T{GEQ(-)}}子程序
 		  System.out.println("ariE()");
@@ -427,10 +510,261 @@ public class Parser {
 			else
 				return flag;
 		}
-	  
+
 	  public boolean B(){
-		  System.out.println("B()");
-		  return false;
-	  }
+			//if语句
+		  	System.out.println("B()");
+			if(w.equals("if")){
+				w = Search(i++);
+				if(w.equals("(")){
+					w = Search(i++);
+					if(E()){
+						if(w.equals(")")){
+							w = Search(i++);
+							if(w.equals("{")){
+								w = Search(i++);
+								if(A()){
+									if(w.equals("}")){
+										w = Search(i++);
+										if(B1()){
+											return true;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			//while语句
+			else if(w.equals("while")){
+				w = Search(i++);
+				if(w.equals("(")){
+					w = Search(i++);
+					if(E()){
+						if(w.equals(")")){
+							w = Search(i++);
+							if(w.equals("{")){
+								w = Search(i++);
+								if(A()){
+									if(w.equals("}")){
+										w = Search(i++);
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			//for语句
+			else if(w.equals("for")){
+				System.out.println("for开始");
+				w = Search(i++);
+				if(w.equals("(")){
+					w = Search(i++);
+					if(X()){
+						System.out.println("X判别成功");
+							if(B()){
+								System.out.println("B判别成功");
+								if(w.equals(";")){
+									w = Search(i++);
+									if(Q()){
+										System.out.println("Q判别成功");
+										if(w.equals(")")){
+											w = Search(i++);
+											if(w.equals("{")){
+												w = Search(i++);
+												if(A()){
+													if(w.equals("}")){
+														w = Search(i++);
+														return true;
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						
+					}
+				}
+			}
+			//scanf函数
+			else if(w.equals("scanf")){
+				w = Search(i++);
+				if(w.equals("(")){
+					w = Search(i++);
+					if(SymbolTable.name.contains(w)){
+						w = Search(i++);
+						if(w.equals(")")){
+							w = Search(i++);
+							if(w.equals(";")){
+								w =Search(i++);							
+								return true;
+							}
+						}
+					}
+				}
+			}
+			//printf函数
+			else if(w.equals("printf")){
+				w = Search(i++);
+				if(w.equals("(")){
+					System.out.println("识别（");
+					w = Search(i++);
+					if(SymbolTable.name.contains(w)){
+						System.out.println("识别变量");
+						w = Search(i++);
+						if(w.equals(")")){
+							w = Search(i++);
+							if(w.equals(";")){
+								w = Search(i++);
+								return true;
+							}
+						}
+					}
+					else if(w.equals("\"")){
+						w = Search(i++);
+						if(CharacterTable.character.contains(w)){
+							w = Search(i++);
+							if(w.equals("\"")){
+								w = Search(i++);
+								if(w.equals(")")){
+									w = Search(i++);
+									if(w.equals(";")){
+										w = Search(i++);
+										return true;
+									}
+								}
+							}
+						}			
+					}	
+				}
+			}
+			return false;
+		}
+		
+		public boolean B1(){
+			System.out.println("B1()");
+			if(w.equals("else")){
+				w = Search(i++);
+				if(w.equals("{")){
+					w = Search(i++);
+					if(A()){
+						if(w.equals("}")){
+							w = Search(i++);
+							return true;
+						}
+						else 
+							return false;
+					}
+					else 
+						return false;
+				}
+				else if(B()){
+					return true;
+				}
+				else
+					return false;
+			}
+			else
+				return true;
+		}
+		
+		public boolean E(){
+			System.out.println("E()");
+			if(H()){
+				if(E1()){
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public boolean E1(){
+			System.out.println("E1()");
+			if(w.equals("&&")){
+				w = Search(i++);
+				if(E()){
+					return true;
+				}
+				else
+					return false;
+			}
+			return true;
+		}
+		
+		public boolean H(){
+			System.out.println("H()");
+			if(G()){
+				if(H1()){
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public boolean H1(){
+			System.out.println("H1()");
+			if(w.equals("||")){
+				w = Search(i++);
+				if(H()){
+					return true;
+				}
+				else
+					return false;
+			}
+			return true;
+		}
+		
+		public boolean G(){
+			System.out.println("G()");
+			if(L()){
+				if(D()){
+					if(L()){
+						return true;
+					}
+				}
+			}
+			else if(w.equals("(")){
+				w = Search(i++);
+				if(E()){
+					if(w.equals(")")){
+						w = Search(i++);
+						return true;
+					}
+				}
+			}
+			else if(w.equals("!")){
+				w = Search(i++);
+				if(E()){
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public boolean D(){
+			System.out.println("D()");
+			if(w.equals(">")){
+				w = Search(i++);
+				return true;
+			}
+			else if(w.equals("<")){
+				w = Search(i++);
+				return true;
+			}
+			else if(w.equals("==")){
+				w = Search(i++);
+				return true;
+			}
+			else if(w.equals("!=")){
+				w = Search(i++);
+				return true;
+			}
+			else 
+				return false;
+		}
 	  
 }
