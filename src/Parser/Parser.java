@@ -1,7 +1,6 @@
 package Parser;
 
 import java.util.ArrayList;
-
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -20,7 +19,6 @@ public class Parser {
 	  String w;
 	  int i;
 	  private ArrayList<Token> token = new ArrayList<Token>();
-	  private Stack<String> ariSEM=new Stack<String>();
 	  public Parser(String str){
 		  Scanner sc = new Scanner(str);
 		  this.token = sc.token;
@@ -346,90 +344,7 @@ public class Parser {
 			  return true;
 		  else
 			  return flag;
-<<<<<<< HEAD
 	  }
-	  
-	  private boolean ariE() {//E->T{+T{GEQ(+)}|-T{GEQ(-)}}子程序
-		  System.out.println("ariE()");
-		  boolean flag=false;
-		  if(!ariT())
-			  return flag;
-		  while(true){
-			  if(w.equals("+")){
-				  w=Search(i++);
-				  System.out.println(w);
-				  if(!ariT())
-					  return flag;
-				  if(!ariGEQ("+"))
-					  return flag;
-			  }
-			  else if(w.equals("-")){
-				  w=Search(i++);
-				  System.out.println(w);
-				  if(!ariT())
-					  return flag;
-				  if(!ariGEQ("-"))
-					  return flag;
-			  }
-			  else
-				  return true;
-		  }
-=======
->>>>>>> origin/master
-	  }
-
-		private boolean ariT() {//T->F{*F{GEQ(*)}|/T{GEQ(/)}}子程序
-			System.out.println("ariT()");
-			boolean flag=false;
-			if(!ariF())
-				return flag;
-			while(true){
-				if(w.equals("*")){
-					w=Search(i++);
-					  System.out.println(w);
-					if(!ariF())
-						return flag;
-					if(!ariGEQ("*"))
-						return flag;
-				}
-				else if(w.equals("/")){
-					w=Search(i++);
-					  System.out.println(w);
-					if(!ariF())
-						return flag;
-					if(!ariGEQ("/"))
-						return flag;
-				}
-				else
-					return true;
-			}
-		}
-
-		private boolean ariF() {//F->I{PUSH(I)}|(E)子程序
-			System.out.println("ariF()");
-			boolean flag=false;
-			if(w.equals("(")){
-				w=Search(i++);
-				System.out.println(w);
-				if(!ariE())
-					return flag;
-				if(w.equals(")")){
-					w=Search(i++);
-					System.out.println(w);
-					return true;
-				}
-				else
-					return flag;
-			}
-			else if(NumberTable.number.contains(w)||SymbolTable.name.contains(w)){
-				ariSEM.push(w);
-				w=Search(i++);
-				System.out.println(w);
-				return true;
-			}
-			else
-				return flag;
-		}
 	  
 	  private boolean ariE() {//E->T{+T{GEQ(+)}|-T{GEQ(-)}}子程序
 		  System.out.println("ariE()");
