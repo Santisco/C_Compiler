@@ -1,7 +1,9 @@
 package Parser;
 
 import java.util.ArrayList;
+
 import java.util.LinkedList;
+import java.util.Stack;
 
 import javax.swing.BoundedRangeModel;
 
@@ -17,6 +19,7 @@ public class Parser {
 	  String w;
 	  int i;
 	  private ArrayList<Token> token = new ArrayList<Token>();
+	  private Stack<String> ariSEM=new Stack<String>();
 	  public Parser(String str){
 		  Scanner sc = new Scanner(str);
 		  this.token = sc.token;
@@ -321,30 +324,109 @@ public class Parser {
 		  return false;
 	  }
 	  
+	  private boolean ariGEQ(String s){
+			System.out.println("ope："+s);
+			if(ariSEM.size()>1){
+				String a2=ariSEM.pop();
+				String a1=ariSEM.pop();
+				String r="t"+(Quadruples.count+1);
+				Quadruples.quadruples[Quadruples.count++]=new Quadruples(s, a1, a2, r);
+				ariSEM.push(r);
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+	  
 	  public boolean L(){
 		  System.out.println("L()");
-		  
-		  LinkedList<String> arithQueue=new LinkedList<String>();
-		  while(!w.equals(";")&&!w.equals(",")){
-			  arithQueue.add(w);
-			  w=Search(i++);
-			  if(!NumberTable.number.contains(w)&&!SymbolTable.name.contains(w)
-					  &&w.equals("+")&&w.equals("-")&&w.equals("*")&&w.equals("/"))
-				  return false;
-		  }
-		  arithQueue.add("#");
-		  
-		  Arithmetic arithmetic=new Arithmetic(arithQueue);
-		  
-		  if(arithmetic.Main()){
-			  for(int i=0;i<Quadruples.count;i++)
-				  System.out.println("("+Quadruples.quadruples[i].arg1+","+Quadruples.quadruples[i].arg2+","+Quadruples.quadruples[i].ope+","+Quadruples.quadruples[i].res+")");
+		  boolean flag=false;
+		  if(ariE())
 			  return true;
-		  }
 		  else
-			  return false;
-		  
+			  return flag;
 	  }
+	  
+	  private boolean ariE() {//E->T{+T{GEQ(+)}|-T{GEQ(-)}}子程序
+		  System.out.println("ariE()");
+		  boolean flag=false;
+		  if(!ariT())
+			  return flag;
+		  while(true){
+			  if(w.equals("+")){
+				  w=Search(i++);
+				  System.out.println(w);
+				  if(!ariT())
+					  return flag;
+				  if(!ariGEQ("+"))
+					  return flag;
+			  }
+			  else if(w.equals("-")){
+				  w=Search(i++);
+				  System.out.println(w);
+				  if(!ariT())
+					  return flag;
+				  if(!ariGEQ("-"))
+					  return flag;
+			  }
+			  else
+				  return true;
+		  }
+	  }
+
+		private boolean ariT() {//T->F{*F{GEQ(*)}|/T{GEQ(/)}}子程序
+			System.out.println("ariT()");
+			boolean flag=false;
+			if(!ariF())
+				return flag;
+			while(true){
+				if(w.equals("*")){
+					w=Search(i++);
+					  System.out.println(w);
+					if(!ariF())
+						return flag;
+					if(!ariGEQ("*"))
+						return flag;
+				}
+				else if(w.equals("/")){
+					w=Search(i++);
+					  System.out.println(w);
+					if(!ariF())
+						return flag;
+					if(!ariGEQ("/"))
+						return flag;
+				}
+				else
+					return true;
+			}
+		}
+
+		private boolean ariF() {//F->I{PUSH(I)}|(E)子程序
+			System.out.println("ariF()");
+			boolean flag=false;
+			if(w.equals("(")){
+				w=Search(i++);
+				System.out.println(w);
+				if(!ariE())
+					return flag;
+				if(w.equals(")")){
+					w=Search(i++);
+					System.out.println(w);
+					return true;
+				}
+				else
+					return flag;
+			}
+			else if(NumberTable.number.contains(w)||SymbolTable.name.contains(w)){
+				ariSEM.push(w);
+				w=Search(i++);
+				System.out.println(w);
+				return true;
+			}
+			else
+				return flag;
+		}
 	  
 	  public boolean B(){
 		  System.out.println("B()");
