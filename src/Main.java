@@ -11,14 +11,6 @@ public class Main {
 	
 		
 		Parser parser=new Parser("void main(){"
-<<<<<<< HEAD
-				+ "int j = 4,i = 3;"
-				+ "}   ");
-		
-		
-		
-		
-=======
 				+ "int j = 0;"
 				+ "if(2 || j > 1){"
 				+ "}"
@@ -37,7 +29,6 @@ public class Main {
 					+","+Quadruples.quadruples[i].arg1
 					+","+Quadruples.quadruples[i].arg2
 					+","+Quadruples.quadruples[i].res+")");
->>>>>>> 9a4442a797885dbe863b346c4c1e152546cb1604
 		
 	}
 }

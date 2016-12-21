@@ -215,10 +215,7 @@ public class Parser {
 	  public boolean R(){
 		  System.out.println("R()");
 		  if(SymbolTable.name.contains(w)){
-<<<<<<< HEAD
-=======
 			  ariSEM.push(w);
->>>>>>> 9a4442a797885dbe863b346c4c1e152546cb1604
 			  w = Search(i++);
 			  System.out.println(w);
 			  if(w.equals("=")){
