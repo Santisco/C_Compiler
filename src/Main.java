@@ -1,7 +1,7 @@
 import Parser.Parser;
 import Scanner.Scanner;
-import Table.Quadruples;
 import Table.StaticTable;
+import Token.Quadruples;
 import Token.Token;
 
 
@@ -11,26 +11,24 @@ public class Main {
 	
 		
 		Parser parser=new Parser("void main(){"
-				+ "int j=0,i;"
-				+ "i=(1+2);"
-				+ "if(i < 1){"
-				+ "int k;"
+				+ "int j = 0;"
+				+ "if(2 || j > 1){"
 				+ "}"
-				+ "else if(i > 1){"
-				+ "k = k+1;"
+				+ "else if(j > 10){"
 				+ "}"
-				+ "printf(j);"			
+				+ "else{"
+				+ "}"
+				+ "for(int i = 0; i <¡¡10; i++){"
+				+ "while(i > 3){"
+				+ "}"
+				+ "}"		
 				+ "}   ");
 		
 		for(int i=0;i<Quadruples.count;i++)
-			System.out.println("("+Quadruples.quadruples[i].arg1
+			System.out.println("("+Quadruples.quadruples[i].ope
+					+","+Quadruples.quadruples[i].arg1
 					+","+Quadruples.quadruples[i].arg2
-					+","+Quadruples.quadruples[i].ope
 					+","+Quadruples.quadruples[i].res+")");
-		
-		
-		
-		
 		
 	}
 }

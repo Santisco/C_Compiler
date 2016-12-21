@@ -9,15 +9,17 @@ import javax.swing.BoundedRangeModel;
 import Scanner.Scanner;
 import Table.CharacterTable;
 import Table.NumberTable;
-import Table.Quadruples;
 import Table.StaticTable;
 import Table.SymbolTable;
+import Token.Quadruples;
 import Token.Token;
 
 public class Parser {
+	  //表达式栈
 	  public Stack<String> ariSEM = new Stack<String>();
 	  String w;
 	  int i;
+	  int flag = -1;
 	  private ArrayList<Token> token = new ArrayList<Token>();
 	  public Parser(String str){
 		  Scanner sc = new Scanner(str);
@@ -183,6 +185,7 @@ public class Parser {
 	  public boolean V(){
 		  System.out.println("V()");
 		  if(SymbolTable.name.contains(w)){
+			  ariSEM.push(w);
 			  w = Search(i++);
 			  System.out.println(w);
 			  if(V1())
@@ -200,6 +203,7 @@ public class Parser {
 			  w = Search(i++);
 			  System.out.println(w);
 			  if(L()){
+				  Quadruples.quadruples[Quadruples.count++] = new Quadruples("=", ariSEM.pop(), "$", ariSEM.pop());
 				  return true;
 			  }
 			  else
@@ -211,12 +215,14 @@ public class Parser {
 	  public boolean R(){
 		  System.out.println("R()");
 		  if(SymbolTable.name.contains(w)){
+			  ariSEM.push(w);
 			  w = Search(i++);
 			  System.out.println(w);
 			  if(w.equals("=")){
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
+					  Quadruples.quadruples[Quadruples.count++] = new Quadruples("=", ariSEM.pop(), "$", ariSEM.pop());
 					  if(w.equals(";")){
 						  w=Search(i++);
 						  return true;
@@ -230,6 +236,7 @@ public class Parser {
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
+					  Quadruples.quadruples[Quadruples.count++] = new Quadruples("+=", ariSEM.pop(), "$", ariSEM.pop());
 					  if(w.equals(";")){
 						  w=Search(i++);
 						  return true;
@@ -243,6 +250,7 @@ public class Parser {
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
+					  Quadruples.quadruples[Quadruples.count++] = new Quadruples("-=", ariSEM.pop(), "$", ariSEM.pop());
 					  if(w.equals(";")){
 						  w=Search(i++);
 						  return true;
@@ -256,6 +264,7 @@ public class Parser {
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
+					  Quadruples.quadruples[Quadruples.count++] = new Quadruples("*=", ariSEM.pop(), "$", ariSEM.pop());
 					  if(w.equals(";")){
 						  w=Search(i++);
 						  return true;
@@ -269,6 +278,7 @@ public class Parser {
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
+					  Quadruples.quadruples[Quadruples.count++] = new Quadruples("/=", ariSEM.pop(), "$", ariSEM.pop());
 					  if(w.equals(";")){
 						  w=Search(i++);
 						  return true;
@@ -278,17 +288,26 @@ public class Parser {
 				  }
 				  return false;
 			  }
-			  else
-				  return false;
-		  }
-		  else if(Q()){
-			  if(w.equals(";")){
-				  w=Search(i++);
-				  return true;
+			  else if(O()){
+				  Quadruples.quadruples[Quadruples.count++] = new Quadruples("=", ariSEM.pop(), "$", ariSEM.pop());
+				  if(w.equals(";")){
+					  w=Search(i++);
+					  return true;
+				  }
+				  else
+					  return false;
 			  }
 			  else
 				  return false;
 		  }
+//		  else if(Q()){
+//			  if(w.equals(";")){
+//				  w=Search(i++);
+//				  return true;
+//			  }
+//			  else
+//				  return false;
+//		  }
 		  else
 			  return false;
 	  }
@@ -296,9 +315,11 @@ public class Parser {
 	  public boolean Q(){
 		  System.out.println("Q()");
 		  if(SymbolTable.name.contains(w)){
+			  ariSEM.push(w);
 			  w=Search(i++);
 			  System.out.println(w);
 			  if(O()){
+				  Quadruples.quadruples[Quadruples.count++] = new Quadruples("=", ariSEM.pop(), "$", ariSEM.pop());  
 				  return true;
 			  }
 			  else
@@ -310,14 +331,18 @@ public class Parser {
 	  public boolean O(){
 		  System.out.println("O()");
 		  if(w.equals("++")){
+			  Quadruples.quadruples[Quadruples.count++] = new Quadruples("+", ariSEM.peek(), "1", "t" + (Quadruples.count+1));
+			  ariSEM.push("t" + (Quadruples.count+1));
 			  w=Search(i++);
 			  System.out.println(w);
 			  return true;
 		  }
 		  else  if(w.equals("--")){
-				  w=Search(i++);
-				  System.out.println(w);
-				  return true;
+			  Quadruples.quadruples[Quadruples.count++] = new Quadruples("-", ariSEM.peek(), "1", "t" + (Quadruples.count+1));
+			  ariSEM.push("t" + (Quadruples.count+1));
+			  w=Search(i++);
+			  System.out.println(w);
+			  return true;
 			  }
 		  return false;
 	  }
@@ -436,12 +461,14 @@ public class Parser {
 					if(E()){
 						if(w.equals(")")){
 							w = Search(i++);
+							Quadruples.quadruples[Quadruples.count++] = new Quadruples("if", ariSEM.pop(), "$", "$");
 							if(w.equals("{")){
 								w = Search(i++);
 								if(A()){
 									if(w.equals("}")){
 										w = Search(i++);
 										if(B1()){
+											Quadruples.quadruples[Quadruples.count++] = new Quadruples("ifEnd", "$", "$", "$");
 											return true;
 										}
 									}
@@ -454,15 +481,18 @@ public class Parser {
 			//while语句
 			else if(w.equals("while")){
 				w = Search(i++);
+				Quadruples.quadruples[Quadruples.count++] = new Quadruples("while", "$", "$", "$");
 				if(w.equals("(")){
 					w = Search(i++);
 					if(E()){
 						if(w.equals(")")){
+							Quadruples.quadruples[Quadruples.count++] = new Quadruples("do", ariSEM.pop(), "$", "$");
 							w = Search(i++);
 							if(w.equals("{")){
 								w = Search(i++);
 								if(A()){
 									if(w.equals("}")){
+										Quadruples.quadruples[Quadruples.count++] = new Quadruples("whileEnd", "$", "$", "$");
 										w = Search(i++);
 										return true;
 									}
@@ -474,18 +504,24 @@ public class Parser {
 			}
 			//for语句
 			else if(w.equals("for")){
+				Stack<Quadruples> temp = new Stack<Quadruples>();
 				System.out.println("for开始");
 				w = Search(i++);
+				Quadruples.quadruples[Quadruples.count++] = new Quadruples("for", "$", "$", "$");
 				if(w.equals("(")){
 					w = Search(i++);
 					if(X()){
 						System.out.println("X判别成功");
-							if(B()){
-								System.out.println("B判别成功");
+							if(E()){
+								System.out.println("E判别成功");
 								if(w.equals(";")){
 									w = Search(i++);
+									Quadruples.quadruples[Quadruples.count++] = new Quadruples("do", ariSEM.pop(), "$", "$");
 									if(Q()){
 										System.out.println("Q判别成功");
+										temp.add(Quadruples.quadruples[Quadruples.count - 1]);
+										temp.add(Quadruples.quadruples[Quadruples.count - 2]);
+										Quadruples.count = Quadruples.count - 2;
 										if(w.equals(")")){
 											w = Search(i++);
 											if(w.equals("{")){
@@ -493,6 +529,9 @@ public class Parser {
 												if(A()){
 													if(w.equals("}")){
 														w = Search(i++);
+														Quadruples.quadruples[Quadruples.count++] = temp.pop();
+														Quadruples.quadruples[Quadruples.count++] = temp.pop();
+														Quadruples.quadruples[Quadruples.count++] = new Quadruples("forEnd", "$", "$", "$");
 														return true;
 													}
 												}
@@ -563,6 +602,7 @@ public class Parser {
 		public boolean B1(){
 			System.out.println("B1()");
 			if(w.equals("else")){
+				Quadruples.quadruples[Quadruples.count++] = new Quadruples("else", "$", "$", "$");
 				w = Search(i++);
 				if(w.equals("{")){
 					w = Search(i++);
@@ -602,6 +642,8 @@ public class Parser {
 			if(w.equals("&&")){
 				w = Search(i++);
 				if(E()){
+					Quadruples.quadruples[Quadruples.count++] = new Quadruples("&&", ariSEM.pop(), ariSEM.pop(), "t" + (Quadruples.count+1));
+					ariSEM.push("t" + (Quadruples.count+1));
 					return true;
 				}
 				else
@@ -625,6 +667,8 @@ public class Parser {
 			if(w.equals("||")){
 				w = Search(i++);
 				if(H()){
+					Quadruples.quadruples[Quadruples.count++] = new Quadruples("||", ariSEM.pop(), ariSEM.pop(), "t" + (Quadruples.count+1));
+					ariSEM.push("t" + (Quadruples.count+1));
 					return true;
 				}
 				else
@@ -635,12 +679,41 @@ public class Parser {
 		
 		public boolean G(){
 			System.out.println("G()");
-			if(L()){
+			if(ariF()){
 				if(D()){
-					if(L()){
+					if(ariF()){
+						switch(flag){
+						case 0:
+							Quadruples.quadruples[Quadruples.count++] = new Quadruples(">", ariSEM.pop(), ariSEM.pop(), "t" + (Quadruples.count+1));
+							ariSEM.push("t" + (Quadruples.count+1));
+							break;
+						case 1:
+							Quadruples.quadruples[Quadruples.count++] = new Quadruples("<", ariSEM.pop(), ariSEM.pop(), "t" + (Quadruples.count+1));
+							ariSEM.push("t" + (Quadruples.count+1));
+							break;
+						case 2:
+							Quadruples.quadruples[Quadruples.count++] = new Quadruples("==", ariSEM.pop(), ariSEM.pop(), "t" + (Quadruples.count+1));
+							ariSEM.push("t" + (Quadruples.count+1));
+							break;
+						case 3:
+							Quadruples.quadruples[Quadruples.count++] = new Quadruples("!=", ariSEM.pop(), ariSEM.pop(), "t" + (Quadruples.count+1));
+							ariSEM.push("t" + (Quadruples.count+1));
+							break;
+						case 4:
+							Quadruples.quadruples[Quadruples.count++] = new Quadruples(">=", ariSEM.pop(), ariSEM.pop(), "t" + (Quadruples.count+1));
+							ariSEM.push("t" + (Quadruples.count+1));
+							break;
+						case 5:
+							Quadruples.quadruples[Quadruples.count++] = new Quadruples("<=", ariSEM.pop(), ariSEM.pop(), "t" + (Quadruples.count+1));
+							ariSEM.push("t" + (Quadruples.count+1));
+							break;
+						}
 						return true;
 					}
+					else 
+						return false;
 				}
+				return true;
 			}
 			else if(w.equals("(")){
 				w = Search(i++);
@@ -654,6 +727,8 @@ public class Parser {
 			else if(w.equals("!")){
 				w = Search(i++);
 				if(E()){
+					Quadruples.quadruples[Quadruples.count++] = new Quadruples("!", ariSEM.pop(), "$", "t" + (Quadruples.count+1));
+					ariSEM.push("t" + (Quadruples.count+1));
 					return true;
 				}
 			}
@@ -664,18 +739,32 @@ public class Parser {
 			System.out.println("D()");
 			if(w.equals(">")){
 				w = Search(i++);
+				flag = 0;
 				return true;
 			}
 			else if(w.equals("<")){
 				w = Search(i++);
+				flag = 1;
 				return true;
 			}
 			else if(w.equals("==")){
 				w = Search(i++);
+				flag = 2;
 				return true;
 			}
 			else if(w.equals("!=")){
 				w = Search(i++);
+				flag = 3;
+				return true;
+			}
+			else if(w.equals(">=")){
+				w = Search(i++);
+				flag = 4;
+				return true;
+			}
+			else if(w.equals("<=")){
+				w = Search(i++);
+				flag = 5;
 				return true;
 			}
 			else 

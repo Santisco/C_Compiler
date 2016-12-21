@@ -1,4 +1,4 @@
-package Table;
+package Token;
 
 import java.util.LinkedList;
 
