@@ -8,10 +8,10 @@ import Token.Token;
 public class Main {
 
 	public static void main(String[] args){
-	
-		
+
 		Parser parser=new Parser("void main(){"
 				+ "int j = 0;"
+				+ "j = j +1;"
 				+ "if(2 || j > 1){"
 				+ "}"
 				+ "else if(j > 10){"
