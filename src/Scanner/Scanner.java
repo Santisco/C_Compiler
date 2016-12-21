@@ -13,10 +13,12 @@ public class Scanner {
 
 	public ArrayList<Token> token = new ArrayList<Token>();
 	LinkedList<String> Code=new LinkedList<String>();//代码
-//	SymbolTable st=new SymbolTable();
+
+	//	SymbolTable st=new SymbolTable();
 //	CharacterTable ct=new CharacterTable();
 //	NumberTable nt=new NumberTable();
-	public Scanner(String str){
+	public boolean Scanner(String str){
+		boolean f=true;
 		int i,j;
 		for(i=0;i<str.length()-3;i++){
 			if(Character.isDigit(str.charAt(i))){
@@ -27,7 +29,7 @@ public class Scanner {
 				if(isNum(str.substring(i, j)))
 					token.add(new Token("NumberTable", NumberTable.isInArray(str.substring(i, j))));
 				else
-					System.err.println("ERR");
+					return false;
 				i=j-1;
 			}
 			else if(Character.isLetter(str.charAt(i))||str.charAt(i)=='_'){
@@ -43,7 +45,7 @@ public class Scanner {
 					token.add(new Token("SymbolTable", SymbolTable.isInArray(string)));
 				}
 				else
-					System.out.println("Err");
+					return false;
 				i=j-1;
 			}
 			else if(StaticTable.isBoundaryWord(str.substring(i, i+1))!=-1){
@@ -51,7 +53,7 @@ public class Scanner {
 					j=i+1;
 					while(str.charAt(j)!='\"'){
 						if(str.charAt(j)=='\n')
-							System.err.println("ERR");
+							return false;
 						j++;
 					}
 					token.add(new Token("BoundaryWord",StaticTable.boundaryWord.indexOf("\"")));
@@ -62,12 +64,9 @@ public class Scanner {
 					i=j;
 				}
 				else if(str.substring(i, i+1).equals("'")){
-					j=i+1;
-					while(str.charAt(j)!='\''){
-						if(str.charAt(j)=='\n')
-							System.err.println("ERR");
-						j++;
-					}
+					j=i+2;
+					if(str.charAt(j)!='\'')
+						return false;
 					token.add(new Token("BoundaryWord",StaticTable.boundaryWord.indexOf("'")));
 					System.out.println("'"+" bound "+StaticTable.boundaryWord.indexOf("'"));
 					token.add(new Token("CharacterTable", CharacterTable.isInArray(str.substring(i+1, j))));
@@ -86,12 +85,13 @@ public class Scanner {
 						System.out.println(str.substring(i,i+1)+" bound "+StaticTable.boundaryWord.indexOf(str.substring(i,i+1)));
 					}
 					else
-						System.err.println("ERR");
+						return false;
 				}
 			}
 		}
 		token.add(new Token("BoundaryWord", StaticTable.boundaryWord.indexOf("#")));
 		token.add(new Token("BoundaryWord", StaticTable.boundaryWord.indexOf("#")));
+		return f;
 	}
 	
 	//是否是标识符

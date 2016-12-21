@@ -21,12 +21,14 @@ public class Parser {
 	  int i;
 	  int flag = -1;
 	  private ArrayList<Token> token = new ArrayList<Token>();
-	  public Parser(String str){
-		  Scanner sc = new Scanner(str);
+	  public boolean Parser(String str){
+		  Scanner sc = new Scanner();
+		  if(!sc.Scanner(str))
+			  return false;
 		  this.token = sc.token;
 		  for(int i=0;i<token.size();i++)
 				System.out.println(token.get(i).tableName+token.get(i).tableIndex);
-		  System.out.println(M());
+		  return M();
 	  }
 	  
 	  public String Search(int i){

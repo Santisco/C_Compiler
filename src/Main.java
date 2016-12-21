@@ -10,19 +10,14 @@ public class Main {
 	public static void main(String[] args){
 	
 		
-		Parser parser=new Parser("void main(){"
-				+ "int j = 0;"
-				+ "if(2 || j > 1){"
-				+ "}"
-				+ "else if(j > 10){"
-				+ "}"
-				+ "else{"
-				+ "}"
-				+ "for(int i = 0; i <¡¡10; i++){"
-				+ "while(i > 3){"
-				+ "}"
-				+ "}"		
-				+ "}   ");
+		Parser parser=new Parser();
+		System.out.println(
+			parser.Parser("void main(){"
+					+ "char a='12s3  fd456';"
+					+ ""
+					+ "}"		
+					+ "}   ")
+		);
 		
 		for(int i=0;i<Quadruples.count;i++)
 			System.out.println("("+Quadruples.quadruples[i].ope
