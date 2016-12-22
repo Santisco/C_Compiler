@@ -15,24 +15,18 @@ public class Main {
 			
 			Parser parser=new Parser();
 			System.out.println(
-				parser.Parser("void main(){"
-						+ " int i;"
-						+ " int b[3] = {\"21312\", \"waduiog\", \"awd\"};"
-						+ "int a = 3+4;"
-						+ "int c = 3;"
-						+ "c[3] = a+b;"
-						+ "for(int m = 0; m < 92; m++){"
-						+ "if(a>3){"
-						+ "a = a+1;"
+				parser.Parser(""
+						+ "struct A{"
+						+ "int a;"
+						+ "}a,b;"
+						+ "int DAD(int a, int b){"
+						+ "int a[3][2] = {2,3,4,5};"
+						+ "int a[3] = {3};"
+
 						+ "}"
-						+ "}"
-						+ "if(m&&28){"
-						+ "}"
-						+ "while(i<1){"
-						+ "char b[3][4][5][6] = {\"gaiskuyhdgva\"};"
-						+ "}"
-						+ "while(i<9){"
-						+ "}"	
+						+ "void main(){"
+						+ "int a[3][2] = {2,3,4,5};"
+						+ "a[2*2][3+9][8][9] = 3;"	
 						+ "}    ")
 			);
 			System.out.println(parser.tagX);
@@ -43,6 +37,7 @@ public class Main {
 						+","+Quadruples.quadruples[i].arg1
 						+","+Quadruples.quadruples[i].arg2
 						+","+Quadruples.quadruples[i].res+")");
+			parser.ariSEM.forEach((i) -> System.out.println(i));
 			
 		}
 }

@@ -20,9 +20,15 @@ public class Parser {
 	  public int tagX = 0;
 	  public int tagB = 0;
 	  public int tagR = 0;
-	  String w;
-	  int i;
-	  int flag = -1;
+	  public int dimension = 1;
+	  public int sizeARRAY = 1;
+	  public int sizeVALUE = 1;
+	  public int doN = 0;
+	public LinkedList<String> temper= new LinkedList<String>();
+	  public String var;
+	  public String w;
+	  public int i;
+	  public int flag = -1;
 	  private ArrayList<Token> token = new ArrayList<Token>();
 	  public boolean Parser(String str){
 		  Scanner sc = new Scanner();
@@ -31,7 +37,7 @@ public class Parser {
 		  this.token = sc.token;
 		  for(int i=0;i<token.size();i++)
 				System.out.println(token.get(i).tableName+token.get(i).tableIndex);
-		  return M();
+		  return S();
 	  }
 	  
 	  public String Search(int i){
@@ -53,9 +59,250 @@ public class Parser {
 		  return null;
 	  }
 	  
+	  public boolean S(){
+		  w=Search(i++);
+		  System.out.println("S()"+w);
+		  if(S0()){
+			  if(F()){
+				  if(M())
+					  return true;
+			  }
+		  }
+		  return false;
+	  }
+	  
+	  public boolean S0(){
+		  System.out.println("S0()");
+		  if(w.equals("struct")){
+			  w = Search(i++);
+			  System.out.println(w);
+			  if(SymbolTable.name.contains(w)){
+				  Quadruples.quadruples[Quadruples.count++]=new Quadruples("struct", w, "$", "$");
+				  w = Search(i++);
+				  System.out.println(w);
+				  if(w.equals("{")){
+					  w = Search(i++);
+					  System.out.println(w);
+					  if(S1()){
+						  if(w.equals("}")){
+							  w = Search(i++);
+							  System.out.println(w);
+							  if(S2()){
+								  if(w.equals(";")){
+									  w = Search(i++);
+									  System.out.println(w);
+									  Quadruples.quadruples[Quadruples.count++]=new Quadruples("structEnd", "$", "$", "$");
+									  if(S0()){
+										  return true;
+									  }
+									  else
+										  return false;
+								  }
+								  else
+									  return false;
+							  }
+							  else
+								  return false;
+						  }
+						  else
+							  return false;
+					  }
+					  else
+						  return false;
+				  }
+				  else
+					  return false;
+			  }
+			  else
+				  return false;
+		  }
+		  else
+			  return true;
+	  }
+	  
+	  public boolean S1(){
+		  System.out.println("S1()");
+		  if(Y()){
+			  if(Z2()){
+				  if(w.equals(";")){
+					  w=Search(i++);
+					  System.out.println(w);
+					  if(S3()){
+						  return true;
+					  }
+					  else
+						  return false;
+				  }
+				  return false;
+			  }
+			  else
+				  return false;
+		  }
+		  else
+			  return false;
+	  }
+	  
+	  public boolean S3(){
+		  System.out.println("S3()");
+		  if(S1())
+			  return true;
+		  else
+			  return true;
+	  }
+	  
+	  
+	  
+	  public boolean Z2(){
+		  System.out.println("Z2()");
+		  if(SymbolTable.name.contains(w)){
+			  w = Search(i++);
+			  System.out.println(w);
+			  if(Z3()){
+				  return true;
+			  }
+			  else
+				  return false;
+		  }
+		  else
+			  return false;
+	  }
+	  
+	  public boolean Z3(){
+		  System.out.println("Z3()");
+		  if(w.equals(",")){
+			  w = Search(i++);
+			  System.out.println(w);
+			  if(Z2()){
+				  return true;
+			  }
+			  else
+				  return false;
+		  }
+		  else
+			  return true;
+	  }
+	  
+	  public boolean S2(){
+		  System.out.println("S2()");
+		  if(Z2())
+			  return true;
+		  else
+			  return true;
+	  }
+	  
+	  public boolean F(){
+		  System.out.println("F()"+Search(i-1)+Search(i));
+		  if(Search(i-1).equals("void")&&Search(i).equals("main"))
+			  return true;
+		 if(Y()){
+			  if(SymbolTable.name.contains(w)){
+				  Quadruples.quadruples[Quadruples.count++] = new Quadruples("function", w, "$","$");
+				  w=Search(i++);
+				  System.out.println(w);
+				  if(w.equals("(")){
+					  w=Search(i++);
+					  System.out.println(w);
+					  if(F1()){
+						  if(w.equals(")")){
+							  w=Search(i++);
+							  System.out.println(w);
+							  if(w.equals("{")){
+								  w=Search(i++);
+								  System.out.println(w);;
+								  if(A()){
+									  if(w.equals("}")){
+										  Quadruples.quadruples[Quadruples.count++] = new Quadruples("functionEnd", "$", "$","$");
+										  w=Search(i++);
+										  System.out.println(w);
+										  if(F()){
+											  return true;
+										  }
+									  }
+								  }
+							  }
+						  }
+					  }
+				  }
+			  }
+			  return false;
+		  }
+		
+		 else if(w.equals("void")){
+			 w = Search(i++);
+			 System.out.println(w);
+			  if(SymbolTable.name.contains(w)){
+				  Quadruples.quadruples[Quadruples.count++] = new Quadruples("function", w, "$","$");
+				  w=Search(i++);
+				  System.out.println(w);
+				  if(w.equals("(")){
+					  w=Search(i++);
+					  System.out.println(w);
+					  if(F1()){
+						  if(w.equals(")")){
+							  w=Search(i++);
+							  System.out.println(w);
+							  if(w.equals("{")){
+								  w=Search(i++);
+								  System.out.println(w);;
+								  if(A()){
+									  if(w.equals("}")){
+										  Quadruples.quadruples[Quadruples.count++] = new Quadruples("functionEnd", "$", "$","$");
+										  w=Search(i++);
+										  System.out.println(w);
+										  if(F()){
+											  return true;
+										  }
+									  }
+								  }
+							  }
+						  }
+					  }
+				  }
+			  }
+			  return false;
+		  }
+		  else
+			  return true;
+	  }
+	  
+	  public boolean F1(){
+		  System.out.println("F1()");
+		  if(Y()){
+			  if(SymbolTable.name.contains(w)){
+				  w = Search(i++);
+				  System.out.println(w);
+				  if(F2()){
+					  return true;  
+				  }
+			  }
+			  return false;
+		  }
+		  else
+			  return true;
+	  }
+	  
+	  public boolean F2(){
+		  System.out.println("F2()");
+		  if(w.equals(",")){
+			  w = Search(i++);
+			  System.out.println(w);
+			  if(Y()){
+				  if(SymbolTable.name.contains(w)){
+					  w = Search(i++);
+					  System.out.println(w);
+					  if(F2()){
+						  return true;
+					  }
+				  }
+			  }
+				  return false;
+		  }
+		  else
+			  return true;
+	  }
+	  
 	  public boolean M(){
-		  w = Search(i++);
-		  System.out.println(w);
+		  System.out.println("M()");
 		  if(w.equals("void")){
 			  w = Search(i++);
 			  System.out.println(w);
@@ -71,10 +318,12 @@ public class Parser {
 						  if(w.equals("{")){
 							  w = Search(i++);
 							  System.out.println(w);
+							  Quadruples.quadruples[Quadruples.count++]=new Quadruples("main", "$", "$", "$");
 							  if(A()){
 								  if(w.equals("}")){
 									  w = Search(i++);
 									  System.out.println(w);
+									  Quadruples.quadruples[Quadruples.count++]=new Quadruples("mainEnd", "$", "$", "$");
 									  if(w.equals("#")){
 										  if(tagX == 0 && tagB == 0 && tagR ==0)
 											  return true;
@@ -88,7 +337,13 @@ public class Parser {
 		  }
 		  return false;
 	  }
-	  
+
+
+
+
+
+
+
 	  public boolean A(){
 		  System.out.println("A()");
 		  if(C()){
@@ -122,6 +377,7 @@ public class Parser {
 			  return false;  
 	  }
 	  
+
 	  public boolean X(){
 		  System.out.println("X()");
 		  if(Y()){
@@ -129,6 +385,7 @@ public class Parser {
 			  if(Z()){
 				  if(w.equals(";")){
 					  w=Search(i++);
+					  System.out.println(w);
 					  return true;
 				  }
 				  else
@@ -137,9 +394,57 @@ public class Parser {
 			  else
 				  return false;
 		  }
-		  return false;
+		  else if(S5()){
+			  tagX++;
+			  return true;
+		  }
+		  else
+			  return false;
 	  }
 	  
+	  public boolean S5(){
+		  System.out.println("S5()");
+		  if(w.equals("struct")){
+			  w = Search(i++);
+			  System.out.println(w);
+			  if(SymbolTable.name.contains(w)){
+				  w = Search(i++);
+				  System.out.println(w);
+				  if(SymbolTable.name.contains(w)){
+					  w = Search(i++);
+					  System.out.println(w);
+					  if(S6()){
+						  if(w.equals(";")){
+							  w = Search(i++);
+							  System.out.println(w);
+							  return true;
+						  }
+					  }
+				  }
+			  }
+			  return false;
+		  }
+		  else
+			  return false;
+	  }
+	  
+	  public boolean S6(){
+		  System.out.println("S6()");
+		  if(w.equals(",")){
+			  w = Search(i++);
+			  System.out.println(w);
+			  if(SymbolTable.name.contains(w)){
+				  w = Search(i++);
+				  System.out.println(w);
+				  if(S6()){
+					  return true;
+				  }
+			  }
+			  return false;
+		  }
+		  else
+			  return true;
+	  }
 	  public boolean Y(){
 		  System.out.println("Y()");
 		  if(w.equals("int")){
@@ -185,7 +490,8 @@ public class Parser {
 		  return false;
 	  }
 	  
-	  public boolean Z1(){
+
+	public boolean Z1(){
 		  System.out.println("Z1()");
 		  if(w.equals(",")){
 			  w = Search(i++);
@@ -242,14 +548,26 @@ public class Parser {
 //			  w = Search(i++);
 		  if(N()){
 			  System.out.println("N()");
+			  System.out.println(w);
 			  tagR++;
-			  ariSEM.push(w);
 			  System.out.println(w);
 			  if(w.equals("=")){
 				  w = Search(i++);
 				  System.out.println(w);
 				  if(L()){
-					  Quadruples.quadruples[Quadruples.count++] = new Quadruples("=", ariSEM.pop(), "$", ariSEM.pop());
+					  if(doN == 0)
+						  Quadruples.quadruples[Quadruples.count++] = new Quadruples("=", ariSEM.pop(), "$", ariSEM.pop());
+					  else if(doN == 1){
+						  String s  = ariSEM.pop();
+						  String s1 = new String();
+						  s1 = var;
+						  System.out.println(temper.size());
+						  for(int index = 0; index < temper.size(); index++){
+							  s1 = s1 +"["+ temper.get(index)+"]";
+						  }
+						  System.out.println(s1);
+						  Quadruples.quadruples[Quadruples.count++] = new Quadruples("=", s, "$", s1);
+					  }
 					  if(w.equals(";")){
 						  w=Search(i++);
 						  return true;
@@ -820,6 +1138,7 @@ public class Parser {
 				  if(w.equals("[")){
 					  w = Search(i++);
 					  if(NumberTable.number.contains(w)){
+						  ariSEM.push(w);
 						  w = Search(i++);
 						  if(w.equals("]")){
 							  w = Search(i++);
@@ -837,9 +1156,11 @@ public class Parser {
 			  if(w.equals("[")){
 				  w = Search(i++);
 				  if(NumberTable.number.contains(w)){
+					  ariSEM.push(w);
 					  w = Search(i++);
 					  if(w.equals("]")){
 						  w = Search(i++);
+						  dimension++;
 						  if(J1()){
 							  return true;
 						  }
@@ -859,13 +1180,31 @@ public class Parser {
 		  public boolean V2(){
 			  System.out.println("V2()");
 			  if(w.equals("=")){
+				  for(int index = dimension; index > 0; index--){
+					  sizeARRAY = sizeARRAY * Integer.parseInt(ariSEM.pop());
+				  }
+				  var = ariSEM.pop();
 				  w = Search(i++);
 				  if(w.equals("{")){
 					  w = Search(i++);
 					  if(K()){
 						  if(w.equals("}")){
-							w = Search(i++);  
-							return true;
+							if(sizeVALUE > sizeARRAY){
+								return false;
+							}
+							else{
+								for(int index = sizeARRAY - 1; index > sizeVALUE - 1; index--){
+									Quadruples.quadruples[Quadruples.count++] = new Quadruples("=", "0", "$", var + index);
+								}
+								for(int index = sizeVALUE - 1; index > -1; index--){
+									Quadruples.quadruples[Quadruples.count++] = new Quadruples("=", ariSEM.pop(), "$", var + index);
+								}
+								w = Search(i++);  
+								dimension = 1;
+								sizeARRAY = 1;
+								sizeVALUE = 1;
+								return true;
+							}
 						  }
 						  else
 							  return false;
@@ -894,6 +1233,7 @@ public class Parser {
 				  }
 			  }
 			  else if(NumberTable.number.contains(w)){
+				  ariSEM.push(w);
 				  w = Search(i++);
 				  if(K2()){
 					  return true;
@@ -907,6 +1247,8 @@ public class Parser {
 			  if(w.equals(",")){
 				  w = Search(i++);
 				  if(NumberTable.number.contains(w)){
+					  sizeVALUE++;
+					  ariSEM.push(w);
 					  w = Search(i++);
 					  if(K2()){
 						  return true;
@@ -950,9 +1292,14 @@ public class Parser {
 		  
 		  public boolean N(){
 			  System.out.println("N()");
+			  doN = 1;
 			  if(SymbolTable.name.contains(w)){
+				  ariSEM.push(w);
 				  w = Search(i++);
 				  if(N1()){
+					  var = ariSEM.pop();
+					  ariSEM.forEach((i) -> System.out.println(i));
+					  temper.forEach((i) -> System.out.println(i + "000000"));
 					  return true;
 				  }
 			  }
@@ -962,10 +1309,10 @@ public class Parser {
 		  public boolean N1(){
 			  if(w.equals("[")){
 				  w = Search(i++);
-				  if(NumberTable.number.contains(w)){
-					  w = Search(i++);
+				  if(L()){
 					  if(w.equals("]")){
 						  w = Search(i++);
+						  temper.add(ariSEM.pop());
 						  if(N1()){
 							  return true;
 						  }
