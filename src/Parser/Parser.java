@@ -17,16 +17,21 @@ import Token.Token;
 public class Parser {
 	  //表达式栈
 	  public Stack<String> ariSEM = new Stack<String>();
+	  public int tagX = 0;
+	  public int tagB = 0;
+	  public int tagR = 0;
 	  String w;
 	  int i;
 	  int flag = -1;
 	  private ArrayList<Token> token = new ArrayList<Token>();
-	  public Parser(String str){
-		  Scanner sc = new Scanner(str);
+	  public boolean Parser(String str){
+		  Scanner sc = new Scanner();
+		  if(!sc.Scanner(str))
+			  return false;
 		  this.token = sc.token;
 		  for(int i=0;i<token.size();i++)
 				System.out.println(token.get(i).tableName+token.get(i).tableIndex);
-		  System.out.println(M());
+		  return M();
 	  }
 	  
 	  public String Search(int i){
@@ -71,7 +76,8 @@ public class Parser {
 									  w = Search(i++);
 									  System.out.println(w);
 									  if(w.equals("#")){
-										  return true;
+										  if(tagX == 0 && tagB == 0 && tagR ==0)
+											  return true;
 									  }
 								  }  
 							  }
@@ -87,7 +93,10 @@ public class Parser {
 		  System.out.println("A()");
 		  if(C()){
 			  if(A()){
-				  return true;
+//				  if(tagX == 0 && tagB == 0 && tagR ==0)
+//					  return true;
+//				  else 
+					  return true;
 			  }
 			  else
 				  return false;
@@ -97,12 +106,18 @@ public class Parser {
 	  
 	  public boolean C(){
 		  System.out.println("C()");
-		  if(X())
+		  if(X()){
+			  tagX--;
 			  return true;
-		  else if(B())
+		  }
+		  else if(B()){
+			  tagB--;
 			  return true;
-		  else if(R())
+		  }
+		  else if(R()){
+			  tagR--;
 			  return true;
+		  }
 		  else
 			  return false;  
 	  }
@@ -110,6 +125,7 @@ public class Parser {
 	  public boolean X(){
 		  System.out.println("X()");
 		  if(Y()){
+			  tagX++;
 			  if(Z()){
 				  if(w.equals(";")){
 					  w=Search(i++);
@@ -188,14 +204,22 @@ public class Parser {
 			  ariSEM.push(w);
 			  w = Search(i++);
 			  System.out.println(w);
-			  if(V1())
+			  if(J()){
+				  if(V2()){
+					  return true;
+				  }
+				  else
+					  return false;
+			  }
+			  else if(V1())
 				  return true;
 			  else
 				  return false;
 		  }
 		  else
 			  return false;
-	  }
+	}
+
 	  
 	  public boolean V1(){
 		  System.out.println("V1()");
@@ -214,9 +238,12 @@ public class Parser {
 	  
 	  public boolean R(){
 		  System.out.println("R()");
-		  if(SymbolTable.name.contains(w)){
+//		  if(SymbolTable.name.contains(w)){
+//			  w = Search(i++);
+		  if(N()){
+			  System.out.println("N()");
+			  tagR++;
 			  ariSEM.push(w);
-			  w = Search(i++);
 			  System.out.println(w);
 			  if(w.equals("=")){
 				  w = Search(i++);
@@ -455,6 +482,7 @@ public class Parser {
 			//if语句
 		  	System.out.println("B()");
 			if(w.equals("if")){
+				tagB++;
 				w = Search(i++);
 				if(w.equals("(")){
 					w = Search(i++);
@@ -480,6 +508,7 @@ public class Parser {
 			}
 			//while语句
 			else if(w.equals("while")){
+				tagB++;
 				w = Search(i++);
 				Quadruples.quadruples[Quadruples.count++] = new Quadruples("while", "$", "$", "$");
 				if(w.equals("(")){
@@ -496,14 +525,27 @@ public class Parser {
 										w = Search(i++);
 										return true;
 									}
+									else 
+										return false;
 								}
+								else 
+									return false;
 							}
+							else 
+								return false;
 						}
+						else 
+							return false;
 					}
+					else 
+						return false;
 				}
+				else 
+					return false;
 			}
 			//for语句
 			else if(w.equals("for")){
+				tagB++;
 				Stack<Quadruples> temp = new Stack<Quadruples>();
 				System.out.println("for开始");
 				w = Search(i++);
@@ -512,6 +554,7 @@ public class Parser {
 					w = Search(i++);
 					if(X()){
 						System.out.println("X判别成功");
+						tagX--;
 							if(E()){
 								System.out.println("E判别成功");
 								if(w.equals(";")){
@@ -546,6 +589,7 @@ public class Parser {
 			}
 			//scanf函数
 			else if(w.equals("scanf")){
+				tagB++;
 				w = Search(i++);
 				if(w.equals("(")){
 					w = Search(i++);
@@ -563,6 +607,7 @@ public class Parser {
 			}
 			//printf函数
 			else if(w.equals("printf")){
+				tagB++;
 				w = Search(i++);
 				if(w.equals("(")){
 					System.out.println("识别（");
@@ -770,5 +815,170 @@ public class Parser {
 			else 
 				return false;
 		}
-	  
+		  public boolean J(){
+			  System.out.println("J()");
+				  if(w.equals("[")){
+					  w = Search(i++);
+					  if(NumberTable.number.contains(w)){
+						  w = Search(i++);
+						  if(w.equals("]")){
+							  w = Search(i++);
+							  if(J1()){
+								  return true;
+							  }
+						  }
+					  }
+				  }
+			  
+			  return false;
+		  }
+		  
+		  public boolean J1(){
+			  if(w.equals("[")){
+				  w = Search(i++);
+				  if(NumberTable.number.contains(w)){
+					  w = Search(i++);
+					  if(w.equals("]")){
+						  w = Search(i++);
+						  if(J1()){
+							  return true;
+						  }
+						  else
+							  return false;
+					  }
+					  else
+						  return false;
+				  }
+				  else
+					  return false;
+			  }
+			  else
+				  return true;
+		  }
+		  
+		  public boolean V2(){
+			  System.out.println("V2()");
+			  if(w.equals("=")){
+				  w = Search(i++);
+				  if(w.equals("{")){
+					  w = Search(i++);
+					  if(K()){
+						  if(w.equals("}")){
+							w = Search(i++);  
+							return true;
+						  }
+						  else
+							  return false;
+					  }
+					  else 
+						  return false;
+				  }
+				  else
+					  return false;
+			  }
+			  return true;
+		  }
+		  
+		  public boolean K(){
+			  System.out.println("K()");
+			  if(w.equals("\"")){
+				  w = Search(i++);
+				  if(CharacterTable.character.contains(w)){
+					  w = Search(i++);
+					  if(w.equals("\"")){
+						  w = Search(i++);
+						  if(K3()){
+							  return true;
+						  }
+					  }
+				  }
+			  }
+			  else if(NumberTable.number.contains(w)){
+				  w = Search(i++);
+				  if(K2()){
+					  return true;
+				  }
+			  }
+			  return false;
+		  }
+		  
+		  public boolean K2(){
+			  System.out.println("K2()");
+			  if(w.equals(",")){
+				  w = Search(i++);
+				  if(NumberTable.number.contains(w)){
+					  w = Search(i++);
+					  if(K2()){
+						  return true;
+					  }
+					  else
+						  return false;
+				  }
+				  else
+					  return false;
+			  }
+			  else
+				  return true;
+		  }
+		  
+		  public boolean K3(){
+			  System.out.println("K3()");
+			  if(w.equals(",")){
+				  w = Search(i++);
+				  if(w.equals("\"")){
+					  w = Search(i++);
+					  if(CharacterTable.character.contains(w)){
+						  w = Search(i++);
+						  if(w.equals("\"")){
+							  w = Search(i++);
+							  if(K3()){
+								  return true;
+							  }
+							  else
+								  return false;
+						  }
+						  else
+							  return false;
+					  }
+					  else
+						  return false;
+				  }
+				  return false;
+			  }
+			  return true;
+		  }
+		  
+		  public boolean N(){
+			  System.out.println("N()");
+			  if(SymbolTable.name.contains(w)){
+				  w = Search(i++);
+				  if(N1()){
+					  return true;
+				  }
+			  }
+			  return false;
+		  }
+		  
+		  public boolean N1(){
+			  if(w.equals("[")){
+				  w = Search(i++);
+				  if(NumberTable.number.contains(w)){
+					  w = Search(i++);
+					  if(w.equals("]")){
+						  w = Search(i++);
+						  if(N1()){
+							  return true;
+						  }
+						  else
+							  return false;
+					  }
+					  else
+						  return false;
+				  }
+				  else
+					  return false;
+			  }
+			  else
+				  return true;
+		  }
 }
