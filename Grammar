@@ -8,8 +8,8 @@ S3->S1|$
 Z2->V3 Z3
 Z3->,Z2|$
 S2->Z2|$
-S5->struct id id S6;
-S6->,id S6|$
+S5->struct id V3 S6;
+S6->,V3 S6|$
 
 子程序
 F->Y id(F1){A}F|$
