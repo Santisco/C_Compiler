@@ -46,3 +46,19 @@ L-> ariE
 ariE->ariT{+ariT|-ariT}
 ariT->ariF{*ariF|/ariT}
 ariF->(L)|num|N|'c'
+
+控制语句
+B->if(E){A}B1
+B->while(E){A}
+B->for(XE;Q){A}
+B->scanf(id);
+B->printf(id);|printf("c");
+B1->else{A}|else B|$
+
+布尔运算
+E->HE1
+E1->&&E|$
+H->GH1
+H1->||H|$
+G->ariF D ariF|(E)|!E
+D-> >|<|==|>=|<=
