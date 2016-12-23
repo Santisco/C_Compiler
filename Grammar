@@ -1,0 +1,48 @@
+文法初始
+S->S0FM
+
+结构体
+S0->struct id{S1}S2;S0|$
+S1->YZ2;S3
+S3->S1|$
+Z2->V3 Z3
+Z3->,Z2|$
+S2->Z2|$
+
+子程序
+F->Y id(F1){A}F|$
+F1->Y V3F2|$
+F2->,Y V3 F2|$
+V3->id|id[num]
+
+主函数
+M->void main(){A}
+
+复合语句
+A->CA|$
+C->X|B|R
+
+声明语句
+X->YZ
+Y->int|char|double|float
+Z->VZ1
+Z1->,Z|$
+V->id JV2|id V1
+V1->=L|$
+J->[num]J1
+J1->[num]J1|$
+V2->=K|$
+K->"sd"K3|num K2
+K2->,numK2|$
+
+赋值语句
+R->N=L;|N+=L;|N-=L;|N*=L;|N/=L;|NO;
+N->id N1
+N1->[L]N1|$
+O->++|--
+
+算术运算语句
+L-> ariE
+ariE->ariT{+ariT|-ariT}
+ariT->ariF{*ariF|/ariT}
+ariF->(L)|num|N|'c'
