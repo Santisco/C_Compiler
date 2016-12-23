@@ -12,10 +12,11 @@ public class Main {
 		
 		Parser parser=new Parser();
 		System.out.println(
-			parser.Parser("void main(){"
-					+ "char a='12s3  fd456';"
+			parser.Parser(""
 					+ ""
-					+ "}"		
+					+ "void main(){"
+					+ "a[2]=b[a+1][a+vdf];"
+					+ "if(1){}"
 					+ "}   ")
 		);
 		
@@ -24,6 +25,6 @@ public class Main {
 					+","+Quadruples.quadruples[i].arg1
 					+","+Quadruples.quadruples[i].arg2
 					+","+Quadruples.quadruples[i].res+")");
-		
+		System.out.println(parser.tagX+","+parser.tagB+","+parser.tagR);
 	}
 }
